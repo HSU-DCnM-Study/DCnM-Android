@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TodoListRecyclerViewAdapter(
+class TodoListAdapter(
     val todoList: ArrayList<Todo>,
     private val inflater: LayoutInflater,
     val activity: TodoActivity
@@ -32,7 +32,7 @@ class TodoListRecyclerViewAdapter(
             content = itemView.findViewById(R.id.content)
             isComplete = itemView.findViewById(R.id.is_complete)
             isComplete.setOnClickListener {
-                activity.changeToDoComplete(todoList.get(adapterPosition).id, activity)
+                activity.changeToDoComplete(todoList[adapterPosition].id, activity)
             }
         }
 
@@ -58,7 +58,7 @@ class TodoListRecyclerViewAdapter(
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val todo = todoList.get(position)
+        val todo = todoList[position]
         if (holder is DateViewHolder) {
             holder.dateTextView.text = todo.created.split("T")[0]
         } else {

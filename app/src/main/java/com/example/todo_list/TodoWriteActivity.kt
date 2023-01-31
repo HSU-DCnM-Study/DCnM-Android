@@ -3,7 +3,6 @@ package com.example.todo_list
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
 import com.example.todo_list.databinding.ActivityTodoWriteBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,7 +23,7 @@ class TodoWriteActivity : AppCompatActivity() {
             .baseUrl("http://mellowcode.org/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        val retrofitService = retrofit.create(RetrofitService::class.java)
+        val todoService = retrofit.create(TodoService::class.java)
 
         binding.makeTodo.setOnClickListener {
             val body = hashMapOf<String, Any>()
@@ -39,7 +38,7 @@ class TodoWriteActivity : AppCompatActivity() {
             val token = sp.getString("token", "")
             header["Authorization"] = "token " + token!!
 
-            retrofitService.makeToDo(header, body).enqueue(object : Callback<Any> {
+            todoService.makeToDo(header, body).enqueue(object : Callback<Any> {
                 override fun onResponse(call: Call<Any>, response: Response<Any>) {
                     onBackPressed()
                 }

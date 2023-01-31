@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.*
 
 
-interface RetrofitService {
+interface TodoService {
 
     @GET("to-do/search/")
     fun searchToDoList(
@@ -17,7 +17,6 @@ interface RetrofitService {
         @HeaderMap headers: Map<String, String>,
         @Path("todoId") todoId: Int
     ): Call<Any>
-
 
     @GET("to-do/")
     fun getToDoList(

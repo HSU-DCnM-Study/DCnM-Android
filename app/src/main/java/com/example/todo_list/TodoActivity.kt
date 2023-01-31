@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
@@ -41,7 +42,7 @@ class TodoActivity : AppCompatActivity() {
             .baseUrl("http://mellowcode.org/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        val retrofitService = retrofit.create(RetrofitService::class.java)
+        val todoService = retrofit.create(TodoService::class.java)
 
         val header = HashMap<String, String>()
         val sp = this.getSharedPreferences(
@@ -50,7 +51,7 @@ class TodoActivity : AppCompatActivity() {
         )
         val token = sp.getString("token", "")
         header.put("Authorization", "token " + token!!)
-        retrofitService.searchToDoList(header, keyword)
+        todoService.searchToDoList(header, keyword)
             .enqueue(object : Callback<ArrayList<Todo>> {
                 override fun onResponse(
                     call: Call<ArrayList<Todo>>,
@@ -69,7 +70,7 @@ class TodoActivity : AppCompatActivity() {
     }
 
     fun makeToDoList(todoList: ArrayList<Todo>) {
-        todoRecyclerView.adapter = TodoListRecyclerViewAdapter(
+        todoRecyclerView.adapter = TodoListAdapter(
             todoList,
             LayoutInflater.from(this@TodoActivity),
             this@TodoActivity
@@ -82,7 +83,7 @@ class TodoActivity : AppCompatActivity() {
             .baseUrl("http://mellowcode.org/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        val retrofitService = retrofit.create(RetrofitService::class.java)
+        val todoService = retrofit.create(TodoService::class.java)
 
         val header = HashMap<String, String>()
         val sp = this.getSharedPreferences(
@@ -92,7 +93,7 @@ class TodoActivity : AppCompatActivity() {
         val token = sp.getString("token", "")
         header.put("Authorization", "token " + token!!)
 
-        retrofitService.changeToDoComplete(header, todoId).enqueue(object : Callback<Any> {
+        todoService.changeToDoComplete(header, todoId).enqueue(object : Callback<Any> {
             override fun onResponse(call: Call<Any>, response: Response<Any>) {
                 activity.getToDoList()
             }
@@ -109,28 +110,31 @@ class TodoActivity : AppCompatActivity() {
             .baseUrl("http://mellowcode.org/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        val retrofitService = retrofit.create(RetrofitService::class.java)
+        val todoService = retrofit.create(TodoService::class.java)
 
         val header = HashMap<String, String>()
         val sp = this.getSharedPreferences(
             "user_info",
             Context.MODE_PRIVATE
         )
+        Log.d("preferences", sp.toString())
         val token = sp.getString("token", "")
-        header.put("Authorization", "token " + token!!)
+        header["Authorization"] = "token " + token!!
 
-        retrofitService.getToDoList(header).enqueue(object : Callback<ArrayList<Todo>> {
+        todoService.getToDoList(header).enqueue(object : Callback<ArrayList<Todo>> {
             override fun onResponse(
                 call: Call<ArrayList<Todo>>,
                 response: Response<ArrayList<Todo>>
             ) {
                 if (response.isSuccessful) {
                     val todoList = response.body()
+                    Log.d("Retrofit", todoList.toString())
                     makeToDoList(todoList!!)
                 }
             }
 
             override fun onFailure(call: Call<ArrayList<Todo>>, t: Throwable) {
+                Log.d("Retrofit", t.toString())
             }
         })
 
